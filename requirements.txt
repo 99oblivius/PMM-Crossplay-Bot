@@ -1,0 +1,6 @@
+uvloop==0.21.0
+python-dotenv==1.1.1
+hikari-lightbulb==3.0.1
+hikari[speedups]==2.3.5
+gel==3.1.0
+structlog==25.4.0
