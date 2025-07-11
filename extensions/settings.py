@@ -4,19 +4,21 @@ from utils.logging import get_logger
 log = get_logger()
 
 
-loader = lightbulb.Loader()
+settings = lightbulb.Group("settings", "Crossplay settings")
 
-#TODO MAKE THIS A SUBGROUP SOMEHOW
-@loader.command
-class YourCommand(
+
+@settings.register
+class Settings(
     lightbulb.SlashCommand,
     name="settings",
     description="Crossplay settings"
 ):
-    ...
+    @lightbulb.invoke
+    async def invoke(self, ctx: lightbulb.Context) -> None:
+        ...
 
 
-@loader.command
+@settings.register
 class Setup(
     lightbulb.SlashCommand,
     name="setup",
@@ -25,3 +27,8 @@ class Setup(
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context) -> None:
         ...
+
+
+loader = lightbulb.Loader()
+loader.command(settings)
+log.info(" - settings")

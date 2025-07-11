@@ -18,7 +18,7 @@ bot = hikari.GatewayBot(
     token=DISCORD_TOKEN)
 client = lightbulb.client_from_app(bot)
 bot.subscribe(hikari.StartingEvent, client.start)
-
+bot.subscribe(hikari.StoppingEvent, client.stop)
 
 @client.register()
 class Hello(
@@ -42,9 +42,10 @@ async def ping(event: hikari.GuildMessageCreateEvent) -> None:
 
 @bot.listen()
 async def starting(_: hikari.StartingEvent) -> None:
+    log.info("Loading: extensions")
     await client.load_extensions_from_package(extensions, recursive=True)
+    log.info("Starting client")
     await client.start()
-    log.info("Loaded: extensions")
 
 @bot.listen()
 async def started(_: hikari.StartedEvent) -> None:
@@ -58,5 +59,5 @@ if __name__ == "__main__":
     registry.register_value(Database, database)
     
     bot.run(
-        asyncio_debug=True,
+        asyncio_debug=False,
         propagate_interrupts=True)

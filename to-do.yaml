@@ -1,0 +1,93 @@
+core_config:
+  match_format: "SnD 5v5"
+  platforms: ["PCVR", "PSVR"]
+  placement_matches_required: 10
+
+queue_management:
+  timeout_options: [15, 30, 60, 90, 120, "toggle"]
+  overflow_handling:
+    trigger_threshold: 10
+    priority_algorithm: "least_recently_played"
+    attendance_verification: true
+    failure_action: "remove_from_queue"
+  match_acceptance:
+    stay_queued_while_accepting: true
+
+match_flow:
+  map_voting:
+    timing: "before_team_formation"
+    options_count: 6
+    shuffle_option: true
+    shuffle_behavior: "reduce_repeats"
+  
+  team_formation:
+    balancing_algorithm: "skill_based_match_making"
+  
+  captain_system:
+    selection_methods: ["self_designated", "most_experienced"]
+    team_A_captain_responsibilities: [
+      "create_lobby",
+      "set_defined_password", 
+      "disable_competitive",
+    ]
+  
+  abandonment:
+    authorized_roles: ["captain", "4_plus_players"]
+
+scoring_data_collection:
+  submission_window:
+    start_time: "10_minutes_after_match_start"
+    authorized_submitters: ["captain", "3_plus_players"]
+    interface: "ephemeral_menu"
+    timeout_notification: "ping_captains_after_hour"
+  
+  input_methods:
+    primary:
+      type: "screenshot_parsing"
+      data_extracted: ["team_scores", "player_stats"]
+      menu_detection: "corner_recognition"
+      decline_if_lacking_confidence: true
+    fallback:
+      type: "manual_input"
+      format: "structured_template"
+      provided_as: "code_block_with_placeholders"
+
+player_management:
+  registration:
+    discord_to_ingame_mapping: true
+    staff_managed: true
+
+ranking_system:
+  rank_tiers: "configurable"
+  staff_editable: true
+  mmr_factors: ["win_loss", "elo", "kill_death_ratio"]
+
+ui_components:
+  - "dynamic_message_updates"
+  - "unified_menu_system_with_componentsV2" 
+  - "ephemeral_cleanup"
+
+data_models:
+  player:
+    - discord_id
+    - ingame_name
+    - mmr
+    - match_history
+  
+  match:
+    - match_id
+    - timestamp
+    - map_selected
+    - map_voting_results
+    - teams
+    - captain_assignments
+    - lobby_password
+    - team_scores
+    - player_stats
+    - match_duration
+    - abandonment_status
+  
+  queue:
+    - player_list
+    - timeout_preferences
+    - priority_weight
