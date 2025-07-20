@@ -36,4 +36,6 @@ if __name__ == "__main__":
     
     bot.run(
         asyncio_debug=False,
-        propagate_interrupts=True)
+        propagate_interrupts=True,
+        check_for_updates=True,
+        activity=hikari.Activity(name="Starting", type=hikari.ActivityType.CUSTOM))

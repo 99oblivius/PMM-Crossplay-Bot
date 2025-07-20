@@ -23,7 +23,6 @@ MatchId = int
 Snowflake = int
 Snowflake02 = int
 
-
 @dataclasses.dataclass
 class GuildSetResult:
     id: uuid.UUID
@@ -175,7 +174,7 @@ async def map_disable(
             guild := select Guild filter Guild.guild_id = <Snowflake>$guild_id,
             name := <str>$name
         update Map
-        filter .guild = guild and .name = name
+        filter .guild = guild and .name = name and .enabled = true
         set {
             enabled := false
         }\
@@ -193,7 +192,8 @@ async def maps_get(
     return await executor.query(
         """\
         select `Map` { * }
-        filter Map.guild = (select Guild filter Guild.guild_id = <Snowflake>$guild_id)\
+        filter .guild = (select Guild filter Guild.guild_id = <Snowflake>$guild_id)
+        and .enabled = true\
         """,
         guild_id=guild_id,
     )
