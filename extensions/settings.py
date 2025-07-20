@@ -28,10 +28,9 @@ class SetupQueue(
         if not ctx.guild_id: return
         channel_set = self.channel.id if self.channel else ctx.channel_id
         await guild_set(db.executor, guild_id=ctx.guild_id, queue_channel_id=channel_set)
-        embed = EmbedBuilder()
+        embed = EmbedBuilder.ok()
         embed.title("Queue Channel")
         embed.description(rf"\- You successfully set the `Queue Channel` to <#{channel_set}>")
-        embed.ok()
         await ctx.respond(embed=embed.build(), ephemeral=True)
 
 
@@ -48,10 +47,9 @@ class SetupScores(
         if not ctx.guild_id: return
         channel_set = self.channel.id if self.channel else ctx.channel_id
         await guild_set(db.executor, guild_id=ctx.guild_id, scores_channel_id=channel_set)
-        embed = EmbedBuilder()
+        embed = EmbedBuilder.ok()
         embed.title("Scores Channel")
         embed.description(rf"\- You successfully set the `Scores Channel` to <#{channel_set}>")
-        embed.ok()
         await ctx.respond(embed=embed.build(), ephemeral=True)
 
 
@@ -67,10 +65,9 @@ class SetupStaffRole(
     async def invoke(self, ctx: lightbulb.Context, db: Database) -> None:
         if not ctx.guild_id: return
         await guild_set(db.executor, guild_id=ctx.guild_id, staff_role_id=self.role.id)
-        embed = EmbedBuilder()
+        embed = EmbedBuilder.ok()
         embed.title("Staff Role")
         embed.description(rf"\- You successfully set the `Staff Role` to {self.role.mention}")
-        embed.ok()
         await ctx.respond(embed=embed.build(), ephemeral=True)
 
 

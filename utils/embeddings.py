@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import datetime as dt
 from typing import Final
 
 import hikari
@@ -11,6 +10,29 @@ EMBED_WARN_COLOR: Final[hikari.Color] = hikari.Color.from_hex_code("#ECAD37")
 EMBED_OK_COLOR: Final[hikari.Color] = hikari.Color.from_hex_code("#28E732")
 
 class EmbedBuilder:
+    @classmethod
+    def ok(cls) -> EmbedBuilder:
+        cl = cls()
+        cl._color = EMBED_OK_COLOR
+        return cl
+
+    @classmethod
+    def error(cls) -> EmbedBuilder:
+        cl = cls()
+        cl._color = EMBED_ERROR_COLOR
+        return cl
+
+    @classmethod
+    def warn(cls) -> EmbedBuilder:
+        cl = cls()
+        cl._color = EMBED_WARN_COLOR
+        return cl
+
+    @classmethod
+    def info(cls) -> EmbedBuilder:
+        cl = cls()
+        cl._color = EMBED_COLOR
+        return cl
 
     def __init__(self) -> None:
         self._title: str | None = None
@@ -32,22 +54,6 @@ class EmbedBuilder:
 
     def color(self, value: hikari.Color) -> EmbedBuilder:
         self._color = value
-        return self
-
-    def ok(self) -> EmbedBuilder:
-        self._color = EMBED_OK_COLOR
-        return self
-
-    def error(self) -> EmbedBuilder:
-        self._color = EMBED_ERROR_COLOR
-        return self
-
-    def warn(self) -> EmbedBuilder:
-        self._color = EMBED_WARN_COLOR
-        return self
-
-    def info(self) -> EmbedBuilder:
-        self._color = EMBED_COLOR
         return self
 
     def thumbnail(self, url: str) -> EmbedBuilder:
