@@ -12,5 +12,7 @@ loader = lightbulb.Loader()
 @loader.listener(hikari.StartedEvent)
 async def started(_: hikari.StartedEvent, db: Database) -> None:
     await db.connect()
-    await guilds_get(db.executor)
+    guilds = await guilds_get(db.executor)
+    for guild in guilds:
+        log.info(f" loaded - guild {guild.guild_id}")
     log.info("Hikari started")
