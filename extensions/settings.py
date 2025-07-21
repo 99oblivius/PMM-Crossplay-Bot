@@ -1,6 +1,6 @@
 from hikari import ChannelType
 import lightbulb
-from rapidfuzz import process, fuzz
+from rapidfuzz import process
 
 from components.database import Database
 from components.gel_queries import (
@@ -32,13 +32,13 @@ class SetupQueue(
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context, db: Database) -> None:
         if not ctx.guild_id: return
-        channel_set = self.channel.id if self.channel else ctx.channel_id
-        await guild_set(db.executor, guild_id=ctx.guild_id, queue_channel_id=channel_set)
+        channel_id = self.channel.id if self.channel else ctx.channel_id
+        await guild_set(db.executor, guild_id=ctx.guild_id, queue_channel_id=channel_id)
         embed = EmbedBuilder.ok()
         embed.title("Queue Channel")
-        embed.description(f"You successfully set the `Queue Channel` to <#{channel_set}>")
+        embed.description(f"You successfully set the `Queue Channel` to <#{channel_id}>")
         await ctx.respond(embed=embed.build(), ephemeral=True)
-        log.info(f"Queue Channel {channel_set} registered")
+        log.info(f"Queue Channel {channel_id} registered")
 
 
 @setup.register
@@ -52,13 +52,13 @@ class SetupScores(
     @lightbulb.invoke
     async def invoke(self, ctx: lightbulb.Context, db: Database) -> None:
         if not ctx.guild_id: return
-        channel_set = self.channel.id if self.channel else ctx.channel_id
-        await guild_set(db.executor, guild_id=ctx.guild_id, scores_channel_id=channel_set)
+        channel_id = self.channel.id if self.channel else ctx.channel_id
+        await guild_set(db.executor, guild_id=ctx.guild_id, scores_channel_id=channel_id)
         embed = EmbedBuilder.ok()
         embed.title("Scores Channel")
-        embed.description(f"You successfully set the `Scores Channel` to <#{channel_set}>")
+        embed.description(f"You successfully set the `Scores Channel` to <#{channel_id}>")
         await ctx.respond(embed=embed.build(), ephemeral=True)
-        log.info(f"Scores Channel {channel_set} registered")
+        log.info(f"Scores Channel {channel_id} registered")
 
 
 @setup.register
@@ -78,6 +78,29 @@ class SetupStaffRole(
         embed.description(f"You successfully set the `Staff Role` to {self.role.mention}")
         await ctx.respond(embed=embed.build(), ephemeral=True)
         log.info(f"Staff Role {self.role.name} registered")
+
+
+@setup.register
+class SetupReadyUp(
+    lightbulb.SlashCommand,
+    name="ready_up",
+    description="Create the Ready Up message"
+):
+    channel = lightbulb.channel("channel", "The Ready Up channel.", channel_types=[ChannelType.GUILD_TEXT], default=None)
+    
+    @lightbulb.invoke
+    async def invoke(self, ctx: lightbulb.Context, db: Database) -> None:
+        if not ctx.guild_id: return
+        channel = self.channel or ctx.interaction.channel
+        
+        message = await ctx.client.rest.create_message(channel.id, "Test")
+        
+        await guild_set(db.executor, guild_id=ctx.guild_id, readyup_channel_id=channel.id, readyup_message_id=message.id)
+        embed = EmbedBuilder.ok()
+        embed.title("Setup Ready Up")
+        embed.description(f"You successfully setup the `Ready Up` [message]({message.make_link(ctx.guild_id)}).")
+        await ctx.respond(embed=embed.build(), ephemeral=True)
+        log.info(f"Ready Up setup in {message.make_link(ctx.guild_id)}")
 
 
 maps = settings.subgroup("map", "Manage maps")

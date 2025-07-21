@@ -23,6 +23,7 @@ MatchId = int
 Snowflake = int
 Snowflake02 = int
 
+
 @dataclasses.dataclass
 class GuildSetResult:
     id: uuid.UUID
@@ -37,6 +38,8 @@ class GuildsGetResult:
     queue_channel_id: Snowflake02 | None
     scores_channel_id: Snowflake02 | None
     staff_role_id: Snowflake02 | None
+    readyup_channel_id: Snowflake02 | None
+    readyup_message_id: Snowflake02 | None
     maps: list[GuildsGetResultMapsItem]
 
 
@@ -84,6 +87,8 @@ async def guild_set(
     guild_id: Snowflake,
     scores_channel_id: Snowflake | None = None,
     queue_channel_id: Snowflake | None = None,
+    readyup_channel_id: Snowflake | None = None,
+    readyup_message_id: Snowflake | None = None,
     staff_role_id: Snowflake | None = None,
 ) -> GuildSetResult:
     return await executor.query_single(
@@ -92,11 +97,15 @@ async def guild_set(
             guild_id := <Snowflake>$guild_id,
             scores_channel_id := <optional Snowflake>$scores_channel_id ?? <Snowflake>{},
             queue_channel_id := <optional Snowflake>$queue_channel_id ?? <Snowflake>{},
+            readyup_channel_id := <optional Snowflake>$readyup_channel_id ?? <Snowflake>{},
+            readyup_message_id := <optional Snowflake>$readyup_message_id ?? <Snowflake>{},
             staff_role_id := <optional Snowflake>$staff_role_id ?? <Snowflake>{}
         insert Guild {
             guild_id := guild_id,
             scores_channel_id := scores_channel_id,
             queue_channel_id := queue_channel_id,
+            readyup_channel_id := readyup_channel_id,
+            readyup_message_id := readyup_message_id,
             staff_role_id := staff_role_id
         }
         unless conflict on .guild_id
@@ -104,6 +113,8 @@ async def guild_set(
             update Guild set {
                 scores_channel_id := scores_channel_id ?? .scores_channel_id,
                 queue_channel_id := queue_channel_id ?? .queue_channel_id,
+                readyup_channel_id := readyup_channel_id ?? .readyup_channel_id,
+                readyup_message_id := readyup_message_id ?? .readyup_message_id,
                 staff_role_id := staff_role_id ?? .staff_role_id
             }
         )\
@@ -111,6 +122,8 @@ async def guild_set(
         guild_id=guild_id,
         scores_channel_id=scores_channel_id,
         queue_channel_id=queue_channel_id,
+        readyup_channel_id=readyup_channel_id,
+        readyup_message_id=readyup_message_id,
         staff_role_id=staff_role_id,
     )
 
